@@ -1,0 +1,65 @@
+{
+    "manifest_version": 2,
+
+    "name": "ONE",
+    "permissions": [
+        "tabs",
+        "storage",
+        "bookmarks"
+    ],
+    "description": "This extension make easier the task of browsing",
+    "version": "1.0", 
+    "background": {
+        "scripts": [
+            "js/jquery-3.1.0.min.js",
+            "js/background.js"
+                    ]
+    },
+    "content_scripts": [{
+            // "all_frames": true,
+            "matches": ["<all_urls>"],
+            "js": [
+                "js/jquery-3.1.0.min.js", 
+                "js/accessButtons.js",
+                "js/linkSelector.js",
+                "js/dwellTimeBar.js",
+                "js/gazer.js",
+                "js/scroller.js",
+                "js/helper.js",
+                "js/menuComponents.js",
+                "js/menuBrowser.js",
+                "js/plugins.js",
+                "js/keyboard.js",
+                "js/scriptWriter.js",
+                "js/content.js"
+            ]
+            // "run_at": "document_start"
+    }],
+    "web_accessible_resources": [
+            "img/back.svg",
+            "img/forward.svg",
+            "img/url.svg",
+            "img/cursor.png",
+            "img/cancel.svg",
+            "img/menu.svg",
+            "img/blank.png",
+            "img/cancelSquare.svg",
+            "img/pauseSquare.svg",
+            "img/defaultIcon.png",
+            "img/reload.svg",
+            "img/bookmark.svg",
+            "img/google.svg",
+            "img/bin.svg",
+            "img/star.svg",
+            "img/starFull.svg",
+            "img/settings.svg",
+            "img/close.svg",
+            "img/target.svg",
+            "img/find.svg",
+            "img/closeBlack.svg",
+            "img/add.svg",
+            "img/minus.svg",
+            "img/check.svg",
+            "img/save.svg"
+              ]
+}
