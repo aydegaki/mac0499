@@ -1,53 +1,59 @@
+// Class: dwell-time keyboard
 var OneKeyboard = {
+
     sufix: null,
     id: null,
     unit: null,
     shift: false,
     cancelAction: null,
-         keyMap: [
-                "1234567890",
-                "qwertyuiop",
-                "asdfghjkl.",
-                ['&uArr;', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '&#9251;', '&larr;']
-            ],
-         keyMapShift: [
-                ",!?@_/#&%$",
-                "QWERTYUIOP",
-                "ASDFGHJKL.",
-                ['&uArr;', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '&#9251;', '&larr;']
-            ],
 
+    keyMap: [
+        "1234567890",
+        "qwertyuiop",
+        "asdfghjkl.",
+        ['&uArr;', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '&#9251;', '&larr;']
+    ],
+
+    keyMapShift: [
+        ",!?@_/#&%$",
+        "QWERTYUIOP",
+        "ASDFGHJKL.",
+        ['&uArr;', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '&#9251;', '&larr;']
+    ],
+
+    // Function: set unit (in pixels) to set keyboard and key buttons size
     withUnit: function(unit) {
         this.unit = unit;
         return this;
     },
 
-    withConteinerSrc: function(conteinerSrc) {
-        this.conteinerSrc = conteinerSrc;
+    // Function: set source container
+    withContainerSrc: function(containerSrc) {
+        this.containerSrc = containerSrc;
         return this;
     },
 
+    // Function: set cancel callback function triggered when quitting keyboard mode
     withCancelAction: function(cancelAction) {
         this.cancelAction = cancelAction;
         return this;
     },
 
+    // Function: create keyboard
     create: function() {
         var self = this;
 
         self.sufix = helper.idGenerator();
         self.height = self.unit*4+ 8*(self.unit*0.25);
 
-        self.id = helper.buildDiv('oneKeyboard', self.conteinerSrc.attr('id'), {
+        self.id = helper.buildDiv('oneKeyboard', self.containerSrc.attr('id'), {
             'position': 'fixed',
             'left': 0,
             'bottom': -self.height,
             'height': self.height,
             'width': $(window).width(),
             'font-family': 'helvetica',
-            // 'opacity': '0.85',
             'background': 'black',
-            // 'visibility': 'hidden',
             'z-index': 2147483646,
         });
         $('#'+self.id).css("transition", "bottom "+0.5+"s ease-out"); 
@@ -65,7 +71,6 @@ var OneKeyboard = {
         });
 
 
-        // $('#'+idKeyboardContainer).append('<div id="keyboardQuit'+self.sufix+'"></div>');
         self.idKeyboardQuit = helper.buildDiv('keyboardQuit', idKeyboardContainer, {
             'position': 'fixed',
             'top': ($(window).height()- self.height)/2  - self.unit/2,
@@ -73,10 +78,8 @@ var OneKeyboard = {
             'height': self.unit,
             'width': self.unit,
             'background': '#F44',
-            // 'box-shadow': '0px 0px 0px 5px darkred inset',
             'box-shadow': '0px 2px 4px darkred',
             'opacity': '0.9',
-            // 'border-radius': '50%/50%',
             'border-radius': '10%',
             'visibility': 'hidden',
         });
@@ -105,7 +108,6 @@ var OneKeyboard = {
 
         for(var i = 0;  i < 10; i++) {
             for(var j = 0; j < 4; j++) {
-                //////////////////////////////////////////////////////////
                 var idKeyUnshift = helper.buildDiv('keyUnshift'+j+i, idKeyboardContainer, {
                     'position': 'absolute',
                     'left': 0.25*self.unit + i*(1.5*self.unit),
@@ -115,7 +117,6 @@ var OneKeyboard = {
                     'background': '#333',
                     'border-radius': '10%',
                     'box-shadow': '5px 5px 5px black',
-                    // 'border': 'solid white 1px',
                     'display': 'table',
                 });
                 helper.insertAOE(idKeyUnshift);
@@ -131,24 +132,13 @@ var OneKeyboard = {
                     'background': '#333',
                     'border-radius': '10%',
                     'box-shadow': '5px 5px 5px black',
-                    // 'border': 'solid white 1px',
                     'display': 'table',
                 });
                 helper.insertAOE(idKeyShift);
                 $('#'+idKeyShift).toggleClass('pressedShift');
-                //////////////////////////////////////////////////////////
 
                 if(j > 0) {
                     var idKeyLowSpan = helper.buildSpan('keyLowSpan'+j+i, self.keyMap[j][i], idKeyUnshift, {
-                        // 'position': 'absolute',
-                        // 'margin': 'auto',
-                        // 'top': 0,
-                        // 'bottom': 0,
-                        // 'left': 0,
-                        // 'right': 0,
-                        // 'height': '80%',
-                        // 'width': '80%',
-                        // 'background': '#444',
                         'color': 'white',
                         'font-size': 0.4*self.unit,
                         'text-align': 'center',
@@ -162,21 +152,11 @@ var OneKeyboard = {
                         color = 'lightgreen';
                     }
                     var idKeyShiftSpan = helper.buildSpan('keyShiftSpan'+j+i, self.keyMapShift[j][i], idKeyShift, {
-                        // 'position': 'absolute',
-                        // 'margin': 'auto',
-                        // 'top': 0,
-                        // 'bottom': 0,
-                        // 'left': 0,
-                        // 'right': 0,
-                        // 'height': '80%',
-                        // 'width': '80%',
-                        // 'background': '#444',
                         'color': color,
                         'font-size': 0.4*self.unit,
                         'text-align': 'center',
                         'display': 'table-cell',
                         'vertical-align': 'middle',
-                        // 'border': 'solid white 1px',
                     });
                     self.insertAction($('#'+idKeyShift), self.keyMapShift[j][i]);
                 } else {
@@ -187,7 +167,6 @@ var OneKeyboard = {
                         'left': 0.1*self.unit,
                         'height': '40%',
                         'width': '40%',
-                        // 'background': 'green',
                         'color': '#666',
                         'font-size': 0.3*self.unit,
                     });
@@ -198,7 +177,6 @@ var OneKeyboard = {
                         'left': 0.1*self.unit,
                         'height': '40%',
                         'width': '40%',
-                        // 'background': 'blue',
                         'color': 'white',
                         'font-size': 0.3*self.unit,
                     });
@@ -210,7 +188,6 @@ var OneKeyboard = {
                         'left': 0.1*self.unit,
                         'height': '40%',
                         'width': '40%',
-                        // 'background': 'green',
                         'color': 'white',
                         'font-size': 0.3*self.unit,
                     });
@@ -221,7 +198,6 @@ var OneKeyboard = {
                         'left': 0.1*self.unit,
                         'height': '40%',
                         'width': '40%',
-                        // 'background': 'blue',
                         'color': '#666',
                         'font-size': 0.3*self.unit,
                     });
@@ -232,9 +208,9 @@ var OneKeyboard = {
         $('.pressedShift').css('visibility', 'hidden');
     },
 
+    // Function: hide keyboard
     hide: function() {
         var self = this;
-        // $('#'+self.id).css('visibility', 'hidden');
         $('#'+self.id).css('bottom', -self.height);
         $('#'+self.idKeyboardQuit).css('visibility', 'hidden');
         self.cancelAction();
@@ -250,27 +226,24 @@ var OneKeyboard = {
         return self.inputSelected;
     },
 
+    // Function: show keyboard
     show: function(input) {
         var self = this;
         self.setInputSelected(input);
-        // $('#'+self.id).css('visibility', 'visible');
         $('#'+self.idKeyboardQuit).css('visibility', 'visible');
         $('#'+self.id).css('bottom', '0');
         $('.pressedShift').css('visibility', 'hidden');
         $('.unpressedShift').css('visibility', 'visible');
     },
 
-
+    // Function: set a callback function triggered when a hover event occur in 'key' object. 'msg' determines which action to happen  
     insertAction: function(key, msg) {
         var self = this;
         key.hover(function() {
             OneDwellTimeBar.dwell(function() {
-                console.log('PRESSED: ' + msg);
                 var input = self.getInputSelected();
                 switch(msg) {
                     case '&uArr;':
-                        console.log('pressed!!!');
-                        // console.log($('.unpressedShift'+self.sufix));
                         if(!self.shift) {
                             self.shift = true;
                             $('.pressedShift').css('visibility', 'visible');
@@ -288,16 +261,9 @@ var OneKeyboard = {
                         self.refocus();
                         break;
                     case '&#9251;':
-                        console.log('IN: &larr;');
-                        // var text = self.getInputSelected().val() + ' ';
-                        // self.getInputSelected().val(text);
-
                         self.getInputSelected().trigger(jQuery.Event('keypress', {keyCode: 13}));
-
-                        // self.refocus();
                         break;
                     default:
-                        console.log('DEFAULT');
                         self.getInputSelected().val(self.getInputSelected().val()+msg);
                         self.refocus();
                         break;
@@ -307,25 +273,28 @@ var OneKeyboard = {
             OneDwellTimeBar.clear();
         });
     },
+
+    // Function: refocus input bar
     refocus: function() {
         var self = this;
         self.getInputSelected().blur().focus().val(self.getInputSelected().val());
         self.googleBarProcedure();
     },
+
+    // Function: center input bar in case it is google search bar.
+    // It is necessary because google search bar is actually a div not an input bar.
     googleBarProcedure: function() {
         var self = this;
         var input = self.getInputSelected();
         if (input.attr('id') === 'lst-ib') {
-            console.log('Google Proc');
             $("body").css("transition", "transform "+0.0+"s ease-in"); 
             x = 0;
             y = 0;
-            // var x = (-input.offset().left) + $(window).width()/2 - input.width()/2;
-            // var y = (-input.offset().top) + ($(window).height()-self.height)/2 - input.height()/2;
             $('body').css('-webkit-transform', 'translate('+x+'px, '+y+'px) scale(1.0)');
         }
     },
 
+    // Function: get keyboard height
     getHeight: function() {
         var self = this;
         return self.height;

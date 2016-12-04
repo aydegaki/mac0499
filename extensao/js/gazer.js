@@ -1,56 +1,60 @@
+// Class: responsible for fixation detection, finding candidate objects, and showing feedback marks
 var OneGazer = {
 
     id: null,
     unit: null,
-    conteinerScr: null,
+    containerScr: null,
     initialPositions: {},
     isPaused: false,
     itemList: [],
 
+    // Function: the unit (pixels) will set the fixation area that determines candidate objects
     withUnit: function(unit) {
         this.unit = unit;
         return this;
     },
+    // Function: the scroller that will receive this object id
     withScroller: function(scroller) {
         this.scroller = scroller;
         return this;
     },
-    withConteinerSrc: function(conteinerSrc) {
-        this.conteinerSrc = conteinerSrc;
+    // Function: set source container
+    withContainerSrc: function(containerSrc) {
+        this.containerSrc = containerSrc;
         return this;
     },
+    // Function: set click access button
     withAccessButton: function(accessButton) {
         this.accessButton = accessButton;
         return this;
     },
 
+    // Function: initialize gazer activities
     create: function() {
         var self = this;
+
         self.idFeedback = self.buildVisualFeedback();
-
         self.scroller.setGazerId(self.idFeedback);
-
         self.enableCursorTracking();
         self.enableFixation(self.unit/2, 500);
     },
 
+    // Function: create gazer visual feedback
     buildVisualFeedback: function() {
         var self = this;
-        return helper.buildDiv('oneGazer', self.conteinerSrc.attr('id'), { 
+        return helper.buildDiv('oneGazer', self.containerSrc.attr('id'), { 
             'position': 'absolute',
-            // 'top': 200, //random valid value
-            // 'left': 200, //random valid value
             'background': 'red',
             'z-index': 2147483647,
             'height': self.unit,
             'width': self.unit,
             'border-radius': '50%/50%', 
             'opacity': '0.5',
-            // 'opacity': '0.0',
             'pointer-events': 'none',
         });
     },
 
+    // Function: get cursor position and update visual feedback
     enableCursorTracking: function() {
         var self = this;
         $('html').mousemove(function(ev){
@@ -63,17 +67,18 @@ var OneGazer = {
         });
     },
 
-    enableFixation: function(threshold, timeMs) {
+    // Function: detect fixations considering 'distanceThreshold' (pixels) and 'timeThreshold' (in milliseconds)
+    enableFixation: function(distanceThreshold, timeThreshold) {
         var self = this;
         var coordBefore = [0,0];
-        var fixThreshold = threshold;
+        var fixThreshold = distanceThreshold;
         var fixTime = 0;
-        var menCoord = [0,0]; // permite a atualizacao da fixacao apos detectada uma fixacao e um deslocamento maior que fixThershold
+        var menCoord = [0,0]; // allow a new fixation after a previous one have already been detected and a distance threshold have occured
         var timeIteration = 50;
         timex = setInterval(function(){
                 if (!self.isPaused){
                     var coordNow = [window.mouseX, window.mouseY];
-                    // if not fixed
+                    /* if not fixed */
                     if (Math.abs(coordNow[0]-coordBefore[0]) > fixThreshold ||
                         Math.abs(coordNow[1]-coordBefore[1]) > fixThreshold ||
                         Math.abs(coordNow[0] - menCoord[0]) > fixThreshold ||
@@ -87,7 +92,7 @@ var OneGazer = {
                        } else {
                            fixTime += timeIteration;
                        } 
-                    if (fixTime === timeMs) {
+                    if (fixTime === timeThreshold) {
                         coordFix = [coordNow[0], coordNow[1]];
                         console.log("FIXATION DETECTED");
                         $('#'+self.idFeedback).css({ "background": "#4F4", });
@@ -105,6 +110,7 @@ var OneGazer = {
     },
 
     lastCounterId: null,
+    // Function: find near elements in a page within a square area centered in 'xC' and 'yC' and side size 'unit' pixels 
     findNearElements: function(xC, yC, unit) {
 
         var self = this;
@@ -134,7 +140,7 @@ var OneGazer = {
                         h0: element.height(),
                     });
                     $('.miniMarker'+counterId).remove();
-                    self.buildMiniMarkers(element, self.conteinerSrc, 'miniMarker'+(counterId++));
+                    self.buildMiniMarkers(element, self.containerSrc, 'miniMarker'+(counterId++));
                 }
 
             }
@@ -142,8 +148,8 @@ var OneGazer = {
 
         /*
          * BUG: select google plugin, search something.
-         * In the result page, some new marker will be removed
-         * The follwing lines are a temporary solution
+         * In the result page, some new markers will be removed
+         * The following is a quick-and-dirty solution 
          */
         if (counterId < self.lastCounterId) {
             for(var i = counterId; i < self.lastCounterId; i++) {
@@ -155,11 +161,12 @@ var OneGazer = {
         return listItems;
     },
 
-    buildMiniMarkers: function(element, conteinerScr, id) {
+    // Function: visual feedback for each candidate objects
+    buildMiniMarkers: function(element, containerScr, id) {
         var xC = element.offset().left;
         var yC = element.offset().top + element.height()/2;
         var markerSize = 10;
-        conteinerScr.append('<div id="'+id+'" class="miniMarker"></div>');
+        containerScr.append('<div id="'+id+'" class="miniMarker"></div>');
 
         var x = xC - markerSize;
         if (x < 0) {
@@ -179,36 +186,41 @@ var OneGazer = {
         });
     },
 
+    // Function: pause fixation detection
     pause: function() {
         var self = this;
-        // helper.printDebug('pause');
         self.isPaused = true;
     },
 
+    // Function: resume fixation detection
     resume: function() {
         var self = this;
-        // helper.printDebug('resume');
         if (!self.resumeLock) {
             self.isPaused = false;
         }
     },
 
     resumeLock: false,
+
+    // Function: lock resume function
     lockResume: function() {
         var self = this;   
         self.resumeLock = true;
     },    
+
+    // Function: unlock resume function
     unlockResume: function() {
         var self = this;   
         self.resumeLock = false;
     },    
 
+    // Function: get list of candidate objects
     getItemList: function() {
         var self = this;
         return self.itemList;
     },
 
-
+    // Function: remove visual feedback for candidate objects
     removeMiniMarkers: function() {
         $('.miniMarker').remove();
     }

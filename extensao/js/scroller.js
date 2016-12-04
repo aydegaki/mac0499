@@ -1,23 +1,29 @@
+// Class: scroller bars to scroll pages in the browser
 var OneScroller = {
+
+    // Function: set scroller width in pixels
     withWidth: function(width) {
         this.width = width;
         return this;
     },
+
+    // Function: set scroller height in pixels
     withHeight: function(height) {
         this.height = height;
         return this;
     },
-    withConteinerSrc: function(conteiner) {
-        this.conteinerSrc = conteiner;
+
+    // Function: set source container
+    withContainerSrc: function(container) {
+        this.containerSrc = container;
         return this;
     },
-    // create: function(width, height, conteiner) {
+
+    // Funtions: create scroll bars in the viewport
     create: function() {
         var self = this;
-        console.log("scroll: create()");
-        // console.log("width: " + width);
-        self.conteinerSrc.append('<div class="scroll scrollUp"><p></p></div>');
-        self.conteinerSrc.append('<div class="scroll scrollDown"><p></p></div>');
+        self.containerSrc.append('<div class="scroll scrollUp"><p></p></div>');
+        self.containerSrc.append('<div class="scroll scrollDown"><p></p></div>');
 
         $('.scroll').toggleClass('oneClass');
 
@@ -54,6 +60,7 @@ var OneScroller = {
         return self.gazerId;
     },
 
+    // Functions: callback function triggered when a hover event occur in a scroll bar
     scrollerHover: function() {
         var self = this;
         var timer = '';
@@ -88,20 +95,16 @@ var OneScroller = {
                     someInvisible = false;
                 }
 
-                // console.log(parseInt($(window).scrollTop() + $(window).height()) + " " + $(document).height());
-
                 // correcao do bug do constante aumento do documento
                 if ($(document).height() <= lastDocH) {
                     lastDocH = $(document).height();
                 }
 
                 if(parseInt($(window).scrollTop() + $(window).height()) > lastDocH) {
-                    // console.log("BOTTOM");
                     lock = true;
                     someInvisible = true;
                     $(ev.target).css("visibility", "hidden");
                 } else if ($(window).scrollTop() == 0){
-                    // console.log("TOP");
                     lock = true;
                     someInvisible = true;
                     $(ev.target).css("visibility", "hidden");
@@ -120,10 +123,12 @@ var OneScroller = {
         );
     },
 
+    // Function: hide scroll bars
     hide: function() {
         $('.scroll').css('visibility', 'hidden');
     },
 
+    // Function: show scroll bars
     show: function(width) {
         $('.scroll').css('visibility', 'visible');
         $('.scroll').css('width', width);

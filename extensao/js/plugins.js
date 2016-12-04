@@ -1,8 +1,10 @@
+// Moudule: build and access plugins
 var OnePlugins = {
 
-    // access argument should have all resources necessary for plugins usage
+    // Function: build plugins and return a list of plugins
     buildAndGetPluginList: function(access) { 
         var self = this;
+        /* access argument should have all resources necessary for plugins usage */
         self.access = access;
         self.pluginList = [ 
             self.makeItem({unit: self.access.unit, img:'img/settings.svg', actionMapKey:'settings', descriptionText: 'Settings'}),
@@ -15,6 +17,7 @@ var OnePlugins = {
         return self.pluginList;
     },
 
+    // Function: make a button according to their correspondent plugin
     makeItem: function (args) {
         var self = this;
         return {
@@ -54,7 +57,6 @@ var OnePlugins = {
                 'width': '80%',
                 'display': 'table',
                 'overflow': 'hidden',
-                // 'background': 'orange',
                 'display': 'table',
             },
             'descriptionSpanCss': {
@@ -66,8 +68,6 @@ var OnePlugins = {
                 'vertical-align': 'middle',
                 'text-align': 'center',
                 'font-weight': 'bold',
-                // '-webkit-text-stroke-width': 2px,
-                // '-webkit-text-stroke-color': '#fff'
                 'text-shadow': '-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black',
             },
             'descriptionText': args.descriptionText,
@@ -75,6 +75,7 @@ var OnePlugins = {
         }
     },
 
+  // Function: return a map linking a plugin name with its action function
   actionMap: function(access){
       return {
             'default': function() { console.log('DEFAULT'); },
@@ -121,7 +122,6 @@ var OnePlugins = {
                                         'height': access.unit*2,
                                         'width': access.unit*2,
                                         'background': 'black',
-                                        // 'z-index': 2147483647,
                                         'box-shadow': '0px 0px 0px 5px white inset',
                                         'border-radius': '10%',
                                     },
@@ -132,8 +132,6 @@ var OnePlugins = {
                                         'height': access.unit,
                                         'width': access.unit,
                                         'background': '#F22',
-                                        // 'opacity': '0.5',
-                                        // 'z-index': 2147483647,
                                         'box-shadow': '0px 0px 0px 5px white inset',
                                         'border-radius': '10%',
                                     },
@@ -144,8 +142,6 @@ var OnePlugins = {
                                         'height': access.unit,
                                         'width': access.unit,
                                         'background': 'gray',
-                                        // 'opacity': '0.5',
-                                        // 'z-index': 2147483647,
                                         'box-shadow': '0px 0px 0px 5px white inset',
                                         'border-radius': '10%',
                                     },
@@ -202,7 +198,6 @@ var OnePlugins = {
                                         'width': '80%',
                                         'display': 'table',
                                         'overflow': 'hidden',
-                                        // 'background': 'orange',
                                         'display': 'table',
                                     },
                                     'descriptionSpanCss': {
@@ -214,16 +209,11 @@ var OnePlugins = {
                                         'font-size': access.unit*0.2,
                                         'height': '80%',
                                         'width': '80%',
-                                        // 'background': '#222',
                                         'color': 'white',
                                         'display': 'table-cell',
-                                        // 'vertical-align': 'middle',
                                         'text-align': 'center',
                                         'word-break': 'break-all',
                                         'font-weight': 'bold',
-                                        // 'box-shadow': '0px 0px 0px 5px white inset',
-                                        // 'border-radius': '5%',
-                                        // 'opacity': '0.5',
                                     },
                                     'descriptionText': title,
                                     'action': (function(i){
@@ -238,7 +228,6 @@ var OnePlugins = {
                                 }
                             ) // end push bookmark
                         }
-                        // console.log(list);
                         menuOuter.loadListMenu(list);
                     }
                 }, 100);
@@ -253,7 +242,6 @@ var OnePlugins = {
 
                 var maxUnit = $(window).height()/(7.5);
 
-                // height = 7.5 units, width = 15 units
                 if($(window).height()/$(window).width() > 7.5/15) {
                     maxUnit = $(window).width()/15;
                 }
@@ -271,7 +259,6 @@ var OnePlugins = {
                     'height': $(window).height(),
                     'width': $(window).width(),
                     'background': 'black',
-                    // 'opacity': '0.9',
                 });
 
                 var idTuningPanel = helper.buildDiv('tuningPanel', idContainer, {
@@ -281,7 +268,6 @@ var OnePlugins = {
                     'height': $(window).height(),
                     'width': firstDiv,
                     'background': 'red',
-                    // 'opacity': '0.7',
                 });
 
 // /////////////////////////////////////////////////////////////////////////////
@@ -383,10 +369,6 @@ var OnePlugins = {
                             access.unit = Math.floor(maxUnit);
                         }
                         $('#'+idSizeDisplaySpan).text((access.unit) + 'px');
-                        // $('.sizeableButton').css({
-                        //     'height': access.unit,
-                        //     'width': access.unit,
-                        // });
                         for(var i = 0; i < postOrder.length; i++) {
                             var pos = getPosition(postOrder[i][0], postOrder[i][1], access.unit, buttonContainerSize);
                             $('#'+buttonsId[i]).css({
@@ -435,10 +417,6 @@ var OnePlugins = {
                             access.unit = Math.floor(maxUnit*0.5);
                         }
                         $('#'+idSizeDisplaySpan).text((access.unit) + 'px');
-                        // $('.sizeableButton').css({
-                        //     'height': access.unit,
-                        //     'width': access.unit,
-                        // });
                         for(var i = 0; i < postOrder.length; i++) {
                             var pos = getPosition(postOrder[i][0], postOrder[i][1], access.unit, buttonContainerSize);
                             $('#'+buttonsId[i]).css({
@@ -463,7 +441,6 @@ var OnePlugins = {
                     'height': $(window).height(),
                     'width': secondDiv,
                     'background': testPanelColor,
-                    // 'opacity': '0.7',
                 });
 
 
@@ -562,7 +539,6 @@ var OnePlugins = {
                     'top': $(window).height()/2,
                     'height': $(window).height()/2,
                     'width': thirdDiv,
-                    // 'background': 'red',
                 });
 
                 var idSaveButton = helper.buildDiv('saveButton', idSaveContainer, {

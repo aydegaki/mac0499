@@ -1,3 +1,4 @@
+// Object: dwell-time element that triggers a callback function
 var OneDwellTimeBar = {
 
     width: 100, 
@@ -6,40 +7,7 @@ var OneDwellTimeBar = {
     time: 500,
     sufix: null,
 
-
-    create: function(size, time,  conteiner) {
-        // var self = this;
-        // self.width = size;
-        // self.height = size*0.3;
-        // self.time = time;
-        // self.sufix = helper.idGenerator('dwell');
-
-        // conteiner.append('<div id="dwellConteiner'+self.sufix+'"></div>');
-        // $('#dwellConteiner'+self.sufix).append('<div id="dwellTime'+self.sufix+'"></div>');
-
-        // $('#dwellTime'+self.sufix).css({
-        //     "position": "absolute",
-        //     "width": "0%",
-        //     "height": "100%",
-        //     "background-color": "green",
-        //     "visibility": "visible",
-        //     "border-radius": "5%", 
-        // });
-
-        // $('#dwellConteiner'+self.sufix).css({
-        //     "width": self.width+"px",
-        //     "height": self.height+"px",
-        //     "background": "gray",
-        //     "visibility": "hidden",
-        //     "position": "absolute",
-        //     "top": "5%",
-        //     "left": "5%",
-        //     "z-index": 2999999999,
-        //     "opacity": '1.0',
-        //     "pointer-events": "none",
-        // });
-    },
-
+    // Function: create a dwell-time bar in 'element' with dimensions based in 'unit'
     dwell: function(func, element, unit) {
 
         var conteiner = $('html');
@@ -48,12 +16,10 @@ var OneDwellTimeBar = {
             size = unit;
         }
         var self = this;
-        // var time = 500;
 
         self.width = size*0.8;
         self.height = size*0.24;
         self.sufix = helper.idGenerator('dwell');
-
 
         conteiner.append('<div id="dwellConteiner'+self.sufix+'"></div>');
         $('#dwellConteiner'+self.sufix).append('<div id="dwellTime'+self.sufix+'"></div>');
@@ -86,7 +52,6 @@ var OneDwellTimeBar = {
         conteiner.css("left", x-self.width/2);
         conteiner.css("top", y-self.height/2);
 
-        // console.log("DISPARA DWELL");
         var width = 0;
         var r = 0;
         var g = 255;
@@ -96,6 +61,8 @@ var OneDwellTimeBar = {
         console.log('dwell: ' + self.time);
         self.dwellTimer = setInterval(frame, self.time/100);
 
+        // Function: change dynamically the bar color and once it is full the 
+        // callback is triggered
         function frame() {
             if (width >= 100) {
                 r = 0;
@@ -120,6 +87,7 @@ var OneDwellTimeBar = {
         }
     },
 
+    // Function: remove dwell-time bar
     clear: function() {
         var self = this;
         clearInterval(self.dwellTimer);
@@ -127,6 +95,7 @@ var OneDwellTimeBar = {
         $('#dwellConteiner'+self.sufix).remove();
     },
 
+    // Set dwell-time
     setTime: function(time) {
         console.log('setTime:' + time);
         var self = this;

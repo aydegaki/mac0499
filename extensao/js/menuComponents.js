@@ -1,16 +1,25 @@
+// Class: menu used to display representations of candidate objets or other items like plugins and bookmarks
 var OneMenuOuter = {
+
+    // Function: set the menu width
     withWidth: function(width) {
         this.width = width;
         return this;
     },
+
+    // Function: set the source container
     withContainerSrc: function(containerSrc) {
         this.containerSrc = containerSrc;
         return this;
     },
+
+    // Function: set unit used to size the menu 
     withUnit: function(unit) {
         this.unit = unit;
         return this;
     },
+
+    // Function: callback funtion triggered when the menu is closed
     withCancelAction: function(cancelAction) {
         this.cancelAction = cancelAction;
         return this;
@@ -20,6 +29,8 @@ var OneMenuOuter = {
         var self = this;
         return self.id;
     },
+
+    // Function: create menu
     create: function() {
         var self = this;
 
@@ -41,11 +52,9 @@ var OneMenuOuter = {
             'position': 'absolute',
             'top': 0,
             'border-bottom': '1px solid gray',
-            // 'overflow': 'hidden',
         });
         $('#'+idMenuCancel).hover(function() {
             OneDwellTimeBar.dwell(function(){
-                // context.hide();
                 $('.onePageStamp').remove();
                 self.cancelAction();
             }, $(this));  
@@ -56,6 +65,7 @@ var OneMenuOuter = {
 
     },
 
+    // Functions: create inside container that contains a list of items
     createListMenu: function() {
         var self = this;
         self.listMenu = NEW(OneListMenu);
@@ -70,54 +80,72 @@ var OneMenuOuter = {
             .create();
 
     },
+
+    // Functions: load the container with items
     loadListMenu: function(list) {
         var self = this;
-        // self.listMenu.insertFormattedList([{'type': 'PLUGIN'},{'type': 'PLUGIN'}]);
         self.listMenu.insertFormattedList(list);
     },
+
+    // Funçtions: show the menu
     show: function() {
         var self = this;
         $('#'+self.id).css('visibility', 'visible');
     },
+
+    // Functions: remove the menu
     remove: function() {
         var self = this;
         $('#'+self.id).remove();
     }
 }
 
+// Class: container that display a list of items
 var OneListMenu = {
 
+    // Function: set the source container
     withContainerSrc: function(containerSrc) {
         var self = this;
         self.containerSrc = containerSrc;
         return this;
     },
+
+    // Function: horizontal position relative to source container
     withX: function(x) {
         var self = this;
         self.x = x;
         return this;
     },
+
+    // Function: vertical position relative to source container
     withY: function(y) {
         var self = this;
         self.y = y;
         return this;
     },
+
+    // Functions: set menu width in pixels
     withWidth: function(width) {
         var self = this;
         self.width = width;
         return this;
     },
+
+    // Functions: set menu width in pixels
     withHeight: function(height) {
         var self = this;
         self.height = height;
         return this;
     },
+
+    // Function: set unit used to size the menu 
     withUnit: function(unit) {
         var self = this;
         self.unit = unit;
         return this;
     },
 
+    // Functions: create list item menu
     create: function() {
         var self = this;
 
@@ -142,6 +170,7 @@ var OneListMenu = {
         self.buildScrollers();
     },
 
+    // Functions: build scrollers to display the item list
     buildScrollers: function() {
         var self = this;
         var idUpScroll = helper.buildDiv('upScroll', self.id, {
@@ -192,8 +221,6 @@ var OneListMenu = {
             $('#'+idUpScroll).css( {'opacity': '0.5',});
             downScrollTimer = setInterval(function() {
                 var currentY = $('#'+self.idItemContainer).offset().top;
-                // console.log(currentY+diff+$(window).scrollTop());
-                // console.log('   '+);
                 if (currentY + diff > $(window).scrollTop()+self.y) {
                     $('#'+idUpScroll).css( {'pointer-events': 'none',});
                     $('#'+idUpScroll).css( {'opacity': '0.0',});
@@ -208,6 +235,7 @@ var OneListMenu = {
         });
     },
 
+    // Functions: format the items according to their types
     insertFormattedList: function(formattedList) {
 
         var self = this;
@@ -224,18 +252,7 @@ var OneListMenu = {
                 'background': '#333',
                 'box-shadow': '0px 0px 0px 1px gray inset',
                 'color': 'white',
-                // 'border-radius': '0% 0% 0% 0%',
             });
-
-            // var idOneButtonAOE = helper.buildDiv('oneButtonAOE'+i, idOneItem, {
-            //     'position': 'absolute',
-            //     'top': 0,
-            //     'left': 0,
-            //     'height': self.unit*1.5,
-            //     'width': self.unit*1.5,
-            //     'background': 'orange',
-            //     'box-shadow': '0px 0px 0px 2px white inset',
-            // });
 
             switch(formattedList[i].type) {
                 case "PAGE_ELEMENT": {
@@ -323,8 +340,6 @@ var OneListMenu = {
                         $('#'+idOneRemoveButton).hover(function(ev) {
                             var that = this;
                             OneDwellTimeBar.dwell(function(){
-                                // formattedList[i].rightAction();
-                                // $('#'+idOneItem).remove();
                                 if( $(that).hasClass('oneRemove')) {
                                     $(that).toggleClass('oneRemove');
                                     $('#'+idOneConfirmButton).css({'background': 'gray'});
@@ -374,6 +389,7 @@ var OneListMenu = {
         } 
     },
 
+    // Function: empty item list
     empty: function() {
         var self = this;
         self.itemCounter = 0;

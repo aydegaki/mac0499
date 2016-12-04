@@ -1,12 +1,10 @@
-var oneRecentBookmarks = [];
-var oneAllBookmarks = [];
+var oneRecentBookmarks = []; // global: stores recent bookmarks
+var oneAllBookmarks = []; // global: stores all bookmarks
+
 (function (document, runtime, storage) {
     'use strict';
 
-    function timeFired() {
-        helper.printDebug();
-    }
-    /* ------------------ MESSAGE HANDLER --------------------- */
+    // Function: handle messages from background.js
     function messageHandler(request, sender){
         if(request.message === 'bookmarkResponse') {
             oneRecentBookmarks = request.bookmarks;
@@ -16,16 +14,13 @@ var oneAllBookmarks = [];
         }
         else if(request.message === "fire_app") { 
 
-            // timeFired();
-
-            // storage.sync.clear();
             var access = {};
             access.prepare = prepare;
             access.prepare(access);
 
+            // Function: configure initial settings (button size, dwell-time)
             function prepare(access) {
                 storage.sync.get('userSettings', function(value) {
-                    console.log('pegando do storage:')
                     var defined = false;
                     var userSettings = {};
                     for (var prop in value) {
@@ -48,28 +43,27 @@ var oneAllBookmarks = [];
                 });
             }
 
+            // Function: start application
             function start(access) {
+
                 $('*').css('cursor', 'none');
                 hideOriginalScrollbar();
+
                 var winW = $(window).width();
                 var winH = $(window).height();
 
-                // extension parameters
                 var unit = access.userSettings.unit; // pixels
                 var dwellTime = access.userSettings.dwellTime; // ms
 
                 console.log('before scalePage: ' + dwellTime);
                 OneDwellTimeBar.setTime(dwellTime);
-                // var dwellTime = 750; // miliseconds
 
                 var sideBarWidth = unit*1.5;
                 var initialScale = (winW-sideBarWidth)/winW;
                 var scrollWidth = winW-sideBarWidth;
 
-                // creating main conteiner
                 var oneContainer =  createExtensionContainer();
 
-                // adjusting page size according to sidebar
                 scalePage(initialScale);
 
                 var gazer = NEW(OneGazer),
@@ -77,11 +71,11 @@ var oneAllBookmarks = [];
                     sideBar = NEW(OneSideBar),
                     accessButtonClick = NEW(OneAccessButton),
                     accessButtonMenu = NEW(OneAccessButton),
-                    linkSelector = NEW(OneLinkSelector),
+                    objectSelector = NEW(OneObjectSelector),
                     browserMenu = NEW(OneMenuBrowser),
                     keyboard = NEW(OneKeyboard);
 
-                // interface access for plugins
+                /* interface access for plugins */
                 access.unit = unit;
                 access.dwellTime = dwellTime;
                 access.initialScale = initialScale;
@@ -92,37 +86,36 @@ var oneAllBookmarks = [];
                 access.sideBar = sideBar;
                 access.accessButtonClick = accessButtonClick;
                 access.accessButtonMenu = accessButtonMenu;
-                access.linkSelector = linkSelector;
+                access.objectSelector = objectSelector;
                 access.browserMenu = browserMenu;
                 access.keyboard = keyboard;
 
 
                 var scriptMap = OneScriptWriter.write(access); 
 
-                sideBar.withUnit(unit)
-                    .withWidth(sideBarWidth)
+                sideBar.withWidth(sideBarWidth)
                     .withHeight(winH)
-                    .withConteinerSrc(oneContainer)
+                    .withContainerSrc(oneContainer)
                     .create();
                 scroller.withHeight(unit*1.5)
                     .withWidth(scrollWidth)
-                    .withConteinerSrc(oneContainer)
+                    .withContainerSrc(oneContainer)
                     .create();
-                // gazer induce accessButtonClick color
+                /* gazer induce accessButtonClick color */
                 gazer.withUnit(unit)
-                    .withConteinerSrc(oneContainer)
+                    .withContainerSrc(oneContainer)
                     .withAccessButton(accessButtonClick)
                     .withScroller(scroller)
                     .create();
-                // cancelAction is triggered through quitButton 
+                /* cancelAction is triggered through quitButton */
                 keyboard.withUnit(unit)
-                    .withConteinerSrc(oneContainer)
+                    .withContainerSrc(oneContainer)
                     .withCancelAction(scriptMap['keyboardCancelScript'])
                     .create();
-                // keyboardAction is triggerd when input is selected, cancelAction, when 'red bar' is activated
-                linkSelector.withUnit(unit)
-                    .withConteinerSrc(oneContainer)
-                    .withCancelAction(scriptMap['linkSelectorCancelScript'])
+                /* keyboardAction is triggerd when input is selected, cancelAction, when 'red bar' is activated */
+                objectSelector.withUnit(unit)
+                    .withContainerSrc(oneContainer)
+                    .withCancelAction(scriptMap['objectSelectorCancelScript'])
                     .withKeyboardAction(scriptMap['keyboardShowScript'])
                     .withInitialScale(initialScale)
                     .create();
@@ -130,7 +123,7 @@ var oneAllBookmarks = [];
                     .withImg('img/cursor.png')
                     .withColor('gray')
                     .withY((winH/3)-unit/2)
-                    .withConteinerSrc(sideBar.getConteiner())
+                    .withContainerSrc(sideBar.getContainer())
                     .withHoverOn(clickHoverOn)
                     .withHoverOff(accessButtonHoverOff)
                     .create();
@@ -138,12 +131,12 @@ var oneAllBookmarks = [];
                     .withImg('img/menu.svg')
                     .withColor('#FF4')
                     .withY((winH*(2/3))-unit/2)
-                    .withConteinerSrc(sideBar.getConteiner())
+                    .withContainerSrc(sideBar.getContainer())
                     .withHoverOn(menuHoverOn)
                     .withHoverOff(accessButtonHoverOff)
                     .create();
                 browserMenu.withUnit(unit)
-                    .withConteinerSrc(oneContainer)
+                    .withContainerSrc(oneContainer)
                     .withCancelAction(scriptMap['browserMenuCancelScript'])
                     .withKeyboardAction(scriptMap['keyboardShowScript'])
                     .withKeyboard(keyboard)
@@ -153,13 +146,12 @@ var oneAllBookmarks = [];
                 );
 
 
-                ///////////////////////////////////////////////////////////////q
+                // Function: callback for click button hoverOn event
                 function clickHoverOn(){
 
-                    // item keys: ['element', 'x0', 'y0', 'w0', 'y0']
-                    var list = gazer.getItemList();
+                    var list = gazer.getItemList(); // item keys: ['element', 'x0', 'y0', 'w0', 'y0']
 
-                    // if there are link candidates, activate button
+                    /* if there are candidate links, activate button */
                     if (list.length > 0) {
 
                         gazer.pause();
@@ -169,21 +161,23 @@ var oneAllBookmarks = [];
                             sideBar.hide();
                             gazer.lockResume(); // otherwise hoveroff accessButton would be triggered
                             gazer.removeMiniMarkers();
-                            linkSelector.loadItemList(list);
-                            // if there is ambiguity, show linkSelector
+                            objectSelector.loadItemList(list);
+                            /* if there is ambiguity, show objectSelector */
                             if (list.length > 1) {
-                                linkSelector.show();
-                                linkSelector.optimizeView(list);
+                                objectSelector.show();
+                                objectSelector.optimizeView(list);
                             }
                         } , accessButtonClick.getElement(), access.unit); 
                     }
                 } 
 
+                // Function: callback for menu/click button hoverOff event
                 function accessButtonHoverOff() {
                     gazer.resume();
                     OneDwellTimeBar.clear(); 
                 }
 
+                // Function: callback for menu button hoverOn event
                 function menuHoverOn(){
                     gazer.pause();
                     OneDwellTimeBar.dwell(function(){
@@ -195,17 +189,18 @@ var oneAllBookmarks = [];
                     }, accessButtonMenu.getElement(), access.unit); 
                 } 
 
-                function scalePage() {
-                    console.log('inside scalePage' + initialScale);
+                // Function: adjust page size according to sidebar
+                function scalePage(initialScale) {
                     $('body').css('-webkit-transform-origin', '0% 0%');
                     $('body').css('-webkit-transform', 'scale('+initialScale+')');
                 }
 
+                // Function: Hide scroll bar
                 function hideOriginalScrollbar() {
-                    // disable scrollbar
-                    $("body").css("overflow", "hidden"); // hide scrollbar
+                    $("body").css("overflow", "hidden"); 
                 }
 
+                // Function: create main extension container that will contain all objects
                 function createExtensionContainer() {
                     var mainContainerId = 'oneContainer',
                         containerSrc = $('html');
@@ -225,11 +220,3 @@ var oneAllBookmarks = [];
     runtime.onMessage.addListener(messageHandler);
 
 }(document, chrome.runtime, chrome.storage));
-
-
-// storage.sync.set({'oi': 'foo'}, function() {console.log('armazenando do storage')});
-// storage.sync.clear();
-// storage.sync.get('oi', function(value) {
-//     console.log('pegando do storage:')
-//     console.log(value)
-// });

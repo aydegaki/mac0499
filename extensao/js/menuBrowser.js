@@ -1,3 +1,4 @@
+// Class: menu with basic browser features and plugin
 var OneMenuBrowser = {
 
     idOuter: null,
@@ -13,57 +14,50 @@ var OneMenuBrowser = {
         return self.unit;
     },
 
+    // Function: set unit that determines button size
     withUnit: function(unit) {
         this.unit = unit;
         return this;
     },
-    withConteinerSrc: function(conteinerSrc) {
-        this.conteinerSrc = conteinerSrc;
+    // Function: set source container
+    withContainerSrc: function(containerSrc) {
+        this.containerSrc = containerSrc;
         return this;
     },
+    // Function: set callback function when this menu is closed
     withCancelAction: function(cancelAction) {
         this.cancelAction = cancelAction;
         return this;
     },
+    // Function: set callback function when URL entrance is selected
     withKeyboardAction: function(keyboardAction) {
         this.keyboardAction = keyboardAction;
         return this;
     },
-    withBookmarks: function(bookmarks) {
-        this.bookmarks = bookmarks;
-        return this;
-    },
+    // Function: set keyboard used when URL entrance is selected
     withKeyboard: function(keyboard) {
         this.keyboard = keyboard;
         return this;
     },
-    withPlugins: function(plugins) {
-        this.plugins = plugins;
-        return this;
-    },
 
-    getItemMenu: function() {
-        var self = this;
-        return self.menuOuter;
-    },
-
+    // Function: create navigation menu and plugin menu
     create: function() {
         var self = this;
 
         self.menuPluginWidth = 3.0*self.unit;
 
-        // plugin space
+        /* plugin space */
         self.menuOuter = NEW(OneMenuOuter);
         self.menuOuter
             .withWidth(self.menuPluginWidth)
-            .withContainerSrc(self.conteinerSrc)
+            .withContainerSrc(self.containerSrc)
             .withUnit(self.unit)
             .withCancelAction(self.cancelAction)
             .create()
         self.menuOuter.createListMenu();
 
         self.navMenu = NEW(OneNavigationMenu);
-        self.navMenu.withContainerSrc(self.conteinerSrc)
+        self.navMenu.withContainerSrc(self.containerSrc)
             .withUnit(self.unit)
             .withMenuPluginWidth(self.menuPluginWidth)
             .withCancelAction(self.cancelAction)
@@ -71,11 +65,13 @@ var OneMenuBrowser = {
             .withKeyboard(self.keyboard)
             .create();
     },
+
     getMenuOuter: function() {
         var self = this;
         return self.menuOuter;
     },
 
+    // Function: load menu with plugins
     loadMenuOuter: function(pluginList) {
         var self = this;
         self.menuOuter.loadListMenu(
@@ -83,12 +79,14 @@ var OneMenuBrowser = {
         );
     },
 
+    // Function: hide menus
     hide: function() {
         var self = this;
         $('#'+self.menuOuter.getId()).css('visibility', 'hidden');
         $('#'+self.navMenu.getId()).css('visibility', 'hidden');
     },
 
+    // Function: menus and reload plugins
     show: function(pluginList) {
         var self = this;
 
@@ -97,7 +95,6 @@ var OneMenuBrowser = {
             if (oneAllBookmarks) {
                 clearInterval(oneTimer);
                 for (var i = 0; i < oneAllBookmarks.length; i++) {
-                    // console.log(oneBookmarks[i].url);
                     if (oneAllBookmarks[i].url === window.location.href) {
                         var imgUrl = chrome.extension.getURL('img/starFull.svg');
                         $('div[label=bookmark] img').attr('src', imgUrl);
@@ -117,13 +114,17 @@ var OneMenuBrowser = {
             pluginList
         );
     },
+
+    // Function: hide url input
     hideUrlInput: function() {
         var self = this;
         self.navMenu.hideUrlInput();
     }
 };
 
+// Class: menu with basic browser functions
 var OneNavigationMenu = {
+
     id: null,
     unit: null,
     side: null,
@@ -131,30 +132,43 @@ var OneNavigationMenu = {
     y0: null,
     buttonCounter: 0,
 
+    // Functions: set source container
     withContainerSrc: function(containerSrc) {
         this.containerSrc = containerSrc;
         return this;
     },
+
+    // Function: set unit that determines button size
     withUnit: function(unit) {
         this.unit = unit;
         return this;
     },
+
+    // Function: set an id for this menu
     withId: function(id) {
         this.id = id;
         return this;
     },
+
+    // Function: parameter necessary to place this menu
     withMenuPluginWidth: function(menuPluginWidth) {
         this.menuPluginWidth = menuPluginWidth;
         return this;
     },
+
+    // Function: set callback function when this menu is closed
     withCancelAction: function(cancelAction) {
         this.cancelAction = cancelAction;
         return this;
     },
+
+    // Function: set callback function when URL entrance is selected
     withKeyboardAction: function(keyboardAction) {
         this.keyboardAction = keyboardAction;
         return this;
     },
+
+    // Function: set keyboard used when URL entrance is selected
     withKeyboard: function(keyboard) {
         this.keyboard = keyboard;
         return this;
@@ -165,6 +179,7 @@ var OneNavigationMenu = {
         return self.id;
     },
 
+    // Functions: create basic browser functions menu
     create: function(){
         var self = this;
 
@@ -195,6 +210,7 @@ var OneNavigationMenu = {
             
     },
     
+    // Function: return postion for the buttons
     getPosition: function(i, j) {
        var self = this; 
        return {
@@ -203,6 +219,8 @@ var OneNavigationMenu = {
        }
     },
 
+    // Function: build a button with (i,j) position in pixels, with an image 'img' that
+    // triggers 'action' when selected. The action assigned is determined according to the 'label'
     buildButton: function(i, j, img, action, label) {
         var self = this;
         var imgUrl = chrome.extension.getURL(img);
@@ -244,10 +262,7 @@ var OneNavigationMenu = {
         self.buttonCounter++;
     },
 
-    hide: function() {
-
-    },
-
+    // Function: return a map of actions to be assigned to the buttons
     actionMap: function() {
         var self = this;
         return {
@@ -297,17 +312,14 @@ var OneNavigationMenu = {
                     'height': self.unit,
                     'width': self.unit,
                     'background': '#44F',
-                    // 'box-shadow': '0px 0px 0px 5px darkblue inset',
                     'box-shadow': '0px 2px 4px darkblue',
                     'opacity': '0.9',
-                    // 'border-radius': '50%/50%',
                     'z-index': 2147483645,
                     'border-radius': '10%',
                     'visibility': 'visible',
                 });
                 helper.insertAOE(self.idKeyboardEnter);
 
-                // var imgUrl = chrome.extension.getURL('img/find.svg');
                 helper.buildImg('keyboardEnterImg', 'img/find.svg', self.idKeyboardEnter, {
                     'position': 'absolute',
                     'height': '70%',
@@ -332,7 +344,6 @@ var OneNavigationMenu = {
                     OneDwellTimeBar.clear();
                 });
 
-                // $('#'+self.id+'Input').val('https://www.google.com').focus();
                 $('#'+self.id+'Input').focus();
                 self.keyboardAction($('#'+self.id+'Input'));
             },
@@ -340,6 +351,8 @@ var OneNavigationMenu = {
             }
         }
     }, 
+
+    // Function: hide url input
     hideUrlInput: function() {
         var self = this;
         $('#'+self.id+'Input').remove();
