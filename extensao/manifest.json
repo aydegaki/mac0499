@@ -21,7 +21,7 @@
             "js": [
                 "js/jquery-3.1.0.min.js", 
                 "js/accessButtons.js",
-                "js/linkSelector.js",
+                "js/objectSelector.js",
                 "js/dwellTimeBar.js",
                 "js/gazer.js",
                 "js/scroller.js",
